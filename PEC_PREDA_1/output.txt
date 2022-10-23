@@ -1,0 +1,19 @@
+
+----------------- PARAMETROS -----------------
+
+Capacidad de la mochila: 20
+Numero de elementos: 3
+Antes de ordenar:    p = [18, 15, 10], v = [25, 24, 15], Vi/Pi = [1.3888888888888888, 1.6, 1.5]
+Despues de ordenar:  p = [15, 10, 18], v = [24, 15, 25], Vi/Pi = [1.6, 1.5, 1.3888888888888888]
+
+----------------- ITERACIONES -----------------
+
+Iteracion numero 1 - Objeto seleccionado:
+   - Objeto 1, Fraccion: 1.0, Peso aportado: 15.0, Valor aportado: 24.0
+Iteracion numero 2 - Objeto seleccionado:
+   - Objeto 2, Fraccion: 0.5, Peso aportado: 5.0, Valor aportado: 7.5
+
+------------------ RESULTADO ------------------
+
+Beneficio total en mochila: 31.5
+Fraccion de cada objeto: [1.0, 0.5, 0.0]
