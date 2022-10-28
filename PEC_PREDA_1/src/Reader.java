@@ -16,7 +16,7 @@ public class Reader{
                       
     }
     
-    /* Dado un archivo valido, extrae la informacion*/
+    /* Dado un archivo de entrada. comprueba si es valido y extrae la informacion */
     public void parseFile(String str) {   	
     	
     	File myFile = new File(str);  	    
@@ -44,7 +44,7 @@ public class Reader{
         }
     }
     
-    /* Dada un string de datos, comprueba que sean validos */
+    /* Dado una String de entrada. comprueba si es valida y extrae la informacion */
     public boolean parseStdin(String str) {
     	
     	String[] splited = str.split("\\s+");
@@ -69,7 +69,7 @@ public class Reader{
     	return true;    
     }
 
-    // Getters    
+    /* Getters de los atributos de la clase */    
     public int getN(){
         return this.n;
     }

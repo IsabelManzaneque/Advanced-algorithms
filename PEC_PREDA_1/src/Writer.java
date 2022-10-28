@@ -2,16 +2,15 @@ import java.io.*;
 
 public class Writer {
 
-    // atributos
     private String ficheroSalida;
     private String infoSalida;
     
-    // constructor
     public Writer(String ficheroSalida, String infoSalida){
         this.ficheroSalida = ficheroSalida;
         this.infoSalida = infoSalida;       
     }
-
+    
+    /* Dada una String de datos, la muestra por pantalla o la guarda en un fichero*/
     public void printSalida() {        
         
     	// Si se especifica un fichero de salida se escribe la informacion en el

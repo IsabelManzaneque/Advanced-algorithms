@@ -12,8 +12,7 @@ public class Greedy{
         this.M = M;
         this.pesos = pesos;
         this.valores = valores;
-	}    
-    
+	}       
     
     /* Función auxiliar para intercambiar dos elementos de dos vectores */
     public void swap(int i, int j){
@@ -27,15 +26,16 @@ public class Greedy{
         pesos.set(j, tempP);       	
     }
   
-    /* Toma el ultimo elemento como pivote, lo coloca en la posicion correcta en el array y coloca 
-     * los elementos menores que el a la izq y los mayores a la derecha*/
+    /* Toma el ultimo elemento como pivote, lo coloca en la posicion correcta en el 
+     * array y coloca los elementos menores que el a la izq y los mayores a la derecha*/
     public int partition(int low, int high){
   
         float pivote = (float)valores.get(high)/(float)pesos.get(high);
         int i = (low - 1);
           
         for (int j = low; j <= high - 1; j++) {  
-            // Si el elemento actual es mayor que el pivote, incrementa el indice del elemento menor
+            // Si el elemento actual es mayor que el pivote, 
+        	// incrementa el indice del elemento menor
             if ((float)valores.get(j)/(float)pesos.get(j) > pivote){
                 i++;
                 swap(i, j);
@@ -49,14 +49,16 @@ public class Greedy{
     public void quickSort(int low, int high){
     	
         if (low < high) {              
-            // Ordena por separado los elementos antes y despues del indice de particion (pi)
+            // Ordena por separado los elementos antes
+        	// y despues del indice de particion (pi)
         	int pi = partition(low, high);
             quickSort(low, pi - 1);
             quickSort(pi + 1, high);
         }
     }
 
-    /* Ejecuta el algoritmo voraz Mochila Fraccionable sobre los datos de entrada */
+    /* Ejecuta el algoritmo voraz Mochila Fraccionable sobre los datos de entrada. Si
+     * trazaOn es true, muestra la traza del algoritmo */
     public String mochilaFraccionable(boolean trazaOn){  
 
         ArrayList<Double> x = new ArrayList<>();
@@ -65,14 +67,16 @@ public class Greedy{
         double beneficio = 0;
         int peso = 0;        
         int i = 0;        
-
+        
+        // La traza se va guardando en la variable traza
         String traza = "\n----------------- PARAMETROS -----------------\n\n";
         traza += "Capacidad de la mochila: " + M + "\nNumero de elementos: " + n; 
         for (int k = 0; k < n; k++) {
             ViPi.add((double)valores.get(k)/(double)pesos.get(k));
         }
         traza += "\nAntes de ordenar:    p = "+ pesos + ", v = " + valores + ", Vi/Pi = " + ViPi;
-
+        
+        // Ordenar objetos en orden no creciente de vi/pi
         quickSort(0, n-1);
 
         for (int k = 0; k < n; k++) {
@@ -85,6 +89,7 @@ public class Greedy{
             x.add(0.0);
         }
         
+        // Itera mientras no se alcance el peso limite de la mochila
         while(peso < M){
             if(peso + pesos.get(i) <= M){
                 x.set(i,1.0);
@@ -102,39 +107,11 @@ public class Greedy{
             i++;
         }
         traza += "\n------------------ RESULTADO ------------------\n\n";
-        traza += "Beneficio total en mochila: " + beneficio + "\nFraccion de cada objeto: " + x + "\n";       
+        traza += "Beneficio total en mochila: " + beneficio + "\nFraccion de cada objeto: " + x + "\n";     
         
+        // Si la traza esta activa, la muestra. En otro caso solo muestra el resultado
         if(trazaOn){return traza;}
         return resultado + beneficio;        
     }
     
-    /* Ordena los objetos en orden no creciente de vi/pi */
-//  public void bubbleSort(){
-//
-//      int tempV;
-//      int tempP;
-//
-//      if (n>1){
-//          for (int j=0; j < n; j++){
-//              for (int i=0; i < n - j - 1; i++) {
-//                  if ( ((float)valores.get(i)/(float)pesos.get(i)) < ((float)valores.get(i+1)/(float)pesos.get(i+1))){
-//
-//                      tempV = valores.get(i);
-//                      tempP = pesos.get(i);
-//
-//                      valores.set(i,valores.get(i+1));
-//                      pesos.set(i,pesos.get(i+1));
-//
-//                      valores.set(i+1, tempV);
-//                      pesos.set(i+1, tempP);
-//                  }
-//              }
-//          }
-//      }
-//  }
-    
-   
-    // 15 1 24        peso del objeto 15, fraccion 1, beneficio aportado 24
-    // 10 0.5 7.5     peso del objeto 10, fraccion 0.5, beneficio aportado 7.5
-    // 31.5           beneficio total 31.5
 }

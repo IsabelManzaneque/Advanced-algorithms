@@ -3,7 +3,7 @@ import java.io.*;
 
 public class mochila_voraz{
 	
-	
+	/* Muestra la ayuda y la sintaxis del comando*/
     public static void helper(){
         System.out.println("SINTAXIS: mochila-voraz [-t][-h] [fichero entrada]\n" +
         "-t                  Traza el algoritmo\n" +
@@ -11,7 +11,8 @@ public class mochila_voraz{
         "[fichero entrada]   Nombre del fichero de entrada\n" +
         "[fichero salida]    Nombre del fichero de salida\n");
     }       
-
+    
+    /* Arranca el algoritmo con los parametros pre-procesados*/
     public static void launcher(boolean showTraza, ArrayList<String> myFiles, String stdin){    			
     	
     	Reader reader = new Reader();    
@@ -19,13 +20,15 @@ public class mochila_voraz{
     	String input = "";
     	String output = "";       	
        	
-    	// Si stdin no esta vacio y myFiles contiene un fichero, solo puede ser el de salida    	
+    	// Si stdin no esta vacio y myFiles contiene un 
+    	// fichero, solo puede ser el de salida    	
     	if(stdin != "") {
     		input = stdin;
     		if(!myFiles.isEmpty()) {
     			output = myFiles.get(0);
     		}
-    	// Si stdin esta vacio, myFiles puede contener input y output, input o nada  	
+    	// Si stdin esta vacio, myFiles puede contener ficheros 
+    	// de entrada y salida, solo fichero de entrada o nada  	
     	}else{
     		if(!myFiles.isEmpty()){
     			input = myFiles.get(0);
@@ -56,7 +59,8 @@ public class mochila_voraz{
     	}
     	
 	}
-
+    
+    /* Metodo main que filtra los argumentos de entrada y pasa a launcher los correctos*/
     public static void main(String[] args){
         
     	ArrayList<String> myFiles = new ArrayList<>();
@@ -69,21 +73,22 @@ public class mochila_voraz{
             	correctInput = (args[0].equals("-h") || !args[0].startsWith("-"));
                 break;
             case 2: 
-            	correctInput = ((args[0].equals("-t") || args[0].equals("-h")) && !args[1].startsWith("-")) //-t o -h y fichero de entrada            				
-            				 || (!args[0].startsWith("-") && !args[1].startsWith("-"));                      //los dos ficheros: entrada y salida
+            	correctInput = ((args[0].equals("-t") || args[0].equals("-h")) && !args[1].startsWith("-"))          				
+            				 || (!args[0].startsWith("-") && !args[1].startsWith("-"));                      
                 break;
             case 3: 
-            	correctInput = ((args[0].equals("-t") || args[0].equals("-h")) && !args[1].startsWith("-") && !args[2].startsWith("-")) // -t o -h y los ficheros de entrada y salida			                
-			                 || (args[0].equals("-t") && args[1].startsWith("-h") && !args[2].startsWith("-"));                         // -t, -h y un fichero
+            	correctInput = ((args[0].equals("-t") || args[0].equals("-h")) && !args[1].startsWith("-") && !args[2].startsWith("-")) 			                
+			                 || (args[0].equals("-t") && args[1].startsWith("-h") && !args[2].startsWith("-"));                        
                 break;
             case 4: 
-            	correctInput = (args[0].equals("-t") && args[1].equals("-h") && !args[2].startsWith("-") && !args[3].startsWith("-")); // todos los parametros en orden
+            	correctInput = (args[0].equals("-t") && args[1].equals("-h") && !args[2].startsWith("-") && !args[3].startsWith("-")); 
                 break;
             default: 
                 System.out.println("Introduzca una entrada correcta (-h para ver ayuda)");            
                 break;
         }
         
+        // Si los argumentos de entrada son correctos, los pasa a launcher como parametro
         if(!correctInput && args.length!=0) {System.out.println("El input no es correcto");}
         else {
 	        for (String a : args) { 
