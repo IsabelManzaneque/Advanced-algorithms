@@ -4,31 +4,20 @@ import java.io.*;
 
 // Cambiar para que en lugar de guardar los atributos, los parser devuelvan un objeto pasteleria?
 public class Reader {
-	
-	private int n; 
-	private int m; 
-	private int pasteleros[]; 
-	private int pedidos[];    
-	private int costes[][];   
-   
-
-    public Reader(){	    	
-    	n = 0;
-    	m = 0;   	                      
-    }
     
-    /* Dado un archivo de entrada. comprueba si es valido y extrae la informacion */
-    public void parseFile(String str) {   	
+    /* Dado un archivo de entrada, extrae y devuelve la informacion */
+    public BranchBound parseFile(String str) {   	
     	
-    	File myFile = new File(str);  	    
+    	File myFile = new File(str);  	
+    	BranchBound bb = null;
         
         try{        	
             Scanner scanner = new Scanner(myFile);  
-            this.n = Integer.parseInt(scanner.nextLine());    
-            this.m = Integer.parseInt(scanner.nextLine()); 
-            this.costes = new int[n][m];
-            this.pasteleros = IntStream.range(0, n).toArray();
-            this.pedidos = Arrays.stream(scanner.nextLine().split("-")).mapToInt(Integer::parseInt).toArray();           
+            int n = Integer.parseInt(scanner.nextLine());    
+            int m = Integer.parseInt(scanner.nextLine()); 
+            int costes[][] = new int[n][m];
+            int pasteleros[] = IntStream.range(0, n).toArray();
+            int pedidos[] = Arrays.stream(scanner.nextLine().split("-")).mapToInt(Integer::parseInt).toArray();           
             
             int i = 0;
             while (scanner.hasNextLine()) {
@@ -37,66 +26,60 @@ public class Reader {
                 costes[i] = Arrays.stream(data).mapToInt(Integer::parseInt).toArray();
                 i++;                        
             }
-            scanner.close();    
+            scanner.close(); 
+            
+            // Si los datos son validos, se construye y devuelve un objeto BranchBound
+            if(!inputValidator(n,m,pasteleros,pedidos,costes)) {return null;}
+            bb = new BranchBound(n,m,pasteleros,pedidos,costes);            
            
         }catch (Exception e){
-            System.out.println("Error en el fichero de entrada");
-        }    
-    
+            return null;
+        }            
+        return bb;    
     }
     
-    /* Dado una String de entrada. comprueba si es valida y extrae la informacion */
-    public boolean parseStdin(String str) {
+    /* Dado una String de entrada, extrae y devuelve la informacion */
+    public BranchBound parseStdin(String str) {
     	
+    	BranchBound bb = null;
     	String[] splited = str.split("\\s+");   	
     	    	
     	try{
-	    	this.n = Integer.parseInt(splited[0]);
-	    	this.m = Integer.parseInt(splited[1]); 
-	    	this.costes = new int[n][m];
-	    	this.pasteleros = IntStream.range(0, n).toArray();
-	    	this.pedidos = Arrays.stream(splited[2].split("-")).mapToInt(Integer::parseInt).toArray();  
-		}catch (NumberFormatException ff){
-	        return false;
-	    } 
- 
-    	// si no hay al menos n, m, pedidos y n*m valores, o si el numero de 
-    	// pasteleros no es igual al de pedidos, la entrada no es correcta 
-    	if(splited.length != (3 + n*m) || n != pedidos.length) { return false;}
+	    	int n = Integer.parseInt(splited[0]);
+	    	int m = Integer.parseInt(splited[1]); 
+	        int costes[][] = new int[n][m];
+	    	int pasteleros[] = IntStream.range(0, n).toArray();
+	    	int pedidos[] = Arrays.stream(splited[2].split("-")).mapToInt(Integer::parseInt).toArray();  
+	    		
+		    int aux = 3;
+		    for(int i = 0; i < n; i++) {
+		    	for(int j = 0; j < m; j++) {
+		    		costes[i][j] = Integer.parseInt(splited[aux]);
+		    		aux ++;
+		    	}
+		    }
+		    // Si los datos son validos, se construye y devuelve un objeto BranchBound
+		    if(!inputValidator(n,m,pasteleros,pedidos,costes)) {return null;}
+	    	bb = new BranchBound(n,m,pasteleros,pedidos,costes);   
+	    	
+		}catch (Exception e){
+	        return null;
+	    }     	  	
+    	return bb;    
+    }  
+    
+    /* Comprueba que los parametros de la entrada sean consistentes con el enunciado */
+    public boolean inputValidator(int n, int m, int pa[], int pe[], int c[][]) {
     	
-    	int aux = 3;
-    	for(int i = 0; i < n; i++) {
-    		for(int j = 0; j < m; j++) {
-    			costes[i][j] = Integer.parseInt(splited[aux]);
-    			aux ++;
-    		}
-    	}    	    	
-    	return true;    
+    	if( n != pe.length || n != pa.length || n != c.length) {return false;}
+        
+    	for(int num : pe) 
+    		if(num<1 || num>m) {return false;}   		
+    	   	
+    	for(int i = 0; i < c.length; i++) 
+    		if(c[i].length != m) {return false;}    	
+    	   	
+    	return true;
     }
-    
-    /* Getters de los atributos de la clase */  
-	public int getN() {
-		return n;
-	}
-
-	public int getM() {
-		return m;
-	}
-
-	public int[] getPasteleros() {
-		return pasteleros;
-	}
-
-	public int[] getPedidos() {
-		return pedidos;
-	}
-
-	public int[][] getCostes() {
-		return costes;
-	}
-
-
-    
-   
 	
 }
