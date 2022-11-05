@@ -7,24 +7,24 @@ public class BranchBound {
 		
 	private int n; // numero de pasteleros
 	private int m; // tipos de pasteles
-	private int pasteleros[]; // [1,2,3,4,5]  de 1 a n pasteleros
+	private int pasteleros[]; // [0,0,0,0,0]  almacena en la posic i el pastelero asignado al pedido i.
 	private int pedidos[];    // [1,1,3,2,1]  n pedidos, tantos pedidos como pasteleros
 	private int costes[][];   //  el valor cij corresponde al coste de que el pastelero i realice el pastel j
-	private double coste;                       //  tiene tantas filas como pasteleros (n rows) y tantas columnas como pasteles (m cols)
+	private double coste;       //  tiene tantas filas como pasteleros (n rows) y tantas columnas como pasteles (m cols)
 	
 
-    public BranchBound(int n, int m, int pasteleros[], int pedidos[], int costes[][]){
+    public BranchBound(int n, int m, int pedidos[], int costes[][]){
     	
     	this.n = n;
     	this.m = m;
-    	this.pasteleros = pasteleros; // igual no me hace falta y solo necesito el de la clase nodo
+    	this.pasteleros = new int[n]; 
     	this.pedidos = pedidos;
     	this.costes = costes;	
     	this.coste = 0.0;
 	}       
     
     /* Clase privada que implementa la estructura de nodos*/     // Tiene acceso a los atributos de la clase padre, pero al reves no
-    private class Nodo{
+    private class Nodo implements Comparable<Nodo>{
     	
     	private int pasteleros[];    // almacena en la posicion i el pastelero asignado al pedido i
     	private boolean asignados[]; // indica si el pastelero de la posicion i ha sido ya asignado
@@ -34,12 +34,20 @@ public class BranchBound {
     	
     	
 		public Nodo() {
-			super();
+			
 			this.pasteleros = new int[n];
 			this.asignados = new boolean[n];
-			this.k = 0;
+			this.k = -1;  // al cambiar la k a -1 el coste sale bien, al cambiarla a 0 el vector sale bien
 			this.coste = 0.0;
 			this.estOpt = 0.0;
+		}
+		public Nodo(Nodo n) {
+			
+			this.pasteleros = n.pasteleros;
+			this.asignados = n.asignados;
+			this.k = n.k;
+			this.coste = n.coste;
+			this.estOpt = n.estOpt;
 		}
 
 		public int[] getPasteleros() {
@@ -80,13 +88,47 @@ public class BranchBound {
 
 		public double getEstOpt() {
 			return estOpt;
-		}    	
+		}
+
+		@Override
+		public int compareTo(BranchBound.Nodo o) {		
+			return Double.compare(this.estOpt, o.estOpt);
+		}  	
+		
+		@Override
+		public String toString() {		
+			return "pasteleros: " + Arrays.toString(pasteleros) + " asignados: " + Arrays.toString(asignados) + " estOpt: " + estOpt + " k: " + k + " coste: " + coste;
+		}  
     	
     }
     
+
     
+    public int[][] getCostesTabla(int c[][], int p[]) {
+    	
+    	int[][] costesTabla = new int[n][n];
+    	
+    	for(int i = 0; i < n; i++) {
+    		p[i] = p[i]-1;
+    	}    	
+    	
+    	for(int i = 0; i < n; i++) {    		
+    		for(int j = 0; j < n; j++) { 
+    			costesTabla[i][j] = c[i][p[j]];
+    	
+    		}    		
+    	}
+        	
+    	return costesTabla;
+    }
+    
+	
+    
+    /* Estimacion optimista minima. Se calcula sumando el coste de las tareas ya asignadas 
+     * con el coste minimo que tienen las tareas pendientes de aignar*/    
     public double estimacionOptimista(int costes[][], int pedidos[], int k, double coste) {
     	
+
     	double estimacion = coste;
     	double menorC = 0.0;    	
     	
@@ -103,6 +145,10 @@ public class BranchBound {
     	return estimacion;
     }
     
+    
+    /* Define una cota pesimista de una solucion parcial sumando el coste de los pasteles ya
+     * asignados con el coste maximo que pueden tener los pendientes de asignar. Se actualiza
+     * cuando se alzancen soluciones y cuando se produzcan nuevos nodos*/
     public double estimacionPesimista(int costes[][], int pedidos[], int k, double coste) {
     	
     	double estimacion = coste;
@@ -127,87 +173,106 @@ public class BranchBound {
      * trazaOn es true, muestra la traza del algoritmo */
     public String pasteleria(boolean trazaOn){  
 
-    	PriorityQueue<Nodo> monticulo = new PriorityQueue();  //monticulo de minimos
+    	PriorityQueue<Nodo> monticulo = new PriorityQueue<>();  //monticulo de minimos
         String resultado ="";
-        String traza = "";
-        Double cota = 0.0;
+        Double cota = 0.0; // cota es el valor de la mejor soluci�n alcanzada hasta el momento
         Double estPes = 0.0;
         Nodo nodo = new Nodo();
-        Nodo hijo = new Nodo();        
+        Nodo hijo = new Nodo(); 
+        int it = 0;
         
-        // Construimos el primer nodo:
+        String traza = "----------------- PARAMETROS -----------------\n\n";
+
+        traza += this;
+        int c[][] = getCostesTabla(costes, pedidos);
         
-        // pasteleros y asignados ya estan inicializados
-        // coste y k ya son 0
-       
-        nodo.setEstOpt(estimacionOptimista(this.costes, this.pedidos, nodo.getK(), nodo.getCoste()));
+        traza += "costes de cada pedido por pastelero:\n";
+        for(int[] arr : c) {
+        	traza += Arrays.toString(arr) + "\n";
+        }
+        
+        
+        nodo.setEstOpt(estimacionOptimista(c, pedidos, nodo.getK(), nodo.getCoste()));
         monticulo.add(nodo);
-        cota = estimacionPesimista(this.costes, this.pedidos, nodo.getK(), nodo.getCoste());
+        cota = estimacionPesimista(c, pedidos, nodo.getK(), nodo.getCoste());
+        
         
         while(!monticulo.isEmpty() && monticulo.peek().getEstOpt() <= cota) {
+        	it++;
+        	traza += "\n--------------------- Iteracion " + it + " ---------------------\n";
+        	traza += "\nCota (estimacion pesimista): " + cota;
+        	traza += "\nNodo en la cima del monticulo:\n" + monticulo.peek() + "\n";
+        	traza += "\nHijos generados:\n";
         	
-        	nodo = monticulo.poll();
         	
-        	//se generan las extensiones validas del nodo
-        	//para cada pastelero no asignado se crea un nodo
+        	hijo.setK(monticulo.peek().getK()+1);
+        	hijo.setPasteleros(monticulo.peek().getPasteleros());
+        	hijo.setAsignados(monticulo.peek().getAsignados());
+        	double costeCima = monticulo.peek().getCoste();
+        			
+        	monticulo.poll();
         	
-        	hijo.setK(nodo.getK()+1);
-        	hijo.setPasteleros(nodo.getPasteleros());
-        	hijo.setAsignados(nodo.getAsignados());
-        	
-        	for(int i = 0; i < n; i++) {
-        		
+        	for(int i = 0; i < n; i++) {        		
         		if(!hijo.getAsignados()[i]) {
         			
-        			hijo.getPasteleros()[hijo.getK()] = i;
+        			hijo.getPasteleros()[hijo.getK()] = i+1;
         			hijo.getAsignados()[i] = true;
-        			hijo.setCoste(nodo.getCoste() + costes[i][pedidos[hijo.getK()]]);
+        			hijo.setCoste(costeCima + c[i][hijo.getK()]);
+        			traza += hijo + "\n";
         			
-        			if(hijo.getK() == n) {
+        			if(hijo.getK() == n-1) { // la solucion esta completa
         				
-        				if(cota >= hijo.getCoste()) {
+        				if(cota >= hijo.getCoste()) {        					
         					
-        					pasteleros = hijo.getPasteleros();  //aqui pasa algo con los vectores pasteleros
+        					pasteleros = hijo.getPasteleros();  
         					coste = hijo.getCoste();
-        					cota = coste;
+        					cota = coste;        					
+        		
         				}
-        			}else {
+        			}else { // la solucion NO esta completa
         				
-        				hijo.setEstOpt(estimacionOptimista(this.costes, this.pedidos, hijo.getK(), hijo.getCoste()));
-        				monticulo.add(hijo);
-        				estPes = estimacionPesimista(this.costes, this.pedidos, hijo.getK(), hijo.getCoste());
+        				Nodo nodeArray[] = new Nodo[1];
         				
-        				if(cota > estPes) {
-        					cota = estPes;
-        				}
+        				hijo.setEstOpt(estimacionOptimista(c, pedidos, hijo.getK(), hijo.getCoste()));        			
+        				nodeArray[0] = new Nodo(hijo);
+        				nodeArray[0].setPasteleros(Arrays.copyOf(hijo.getPasteleros(), hijo.getPasteleros().length)); 
+        				nodeArray[0].setAsignados(Arrays.copyOf(hijo.getAsignados(), hijo.getAsignados().length));
+        				monticulo.add(nodeArray[0]);
+        				estPes = estimacionPesimista(c, pedidos, hijo.getK(), hijo.getCoste());
+        				
+        				
+        				if(cota > estPes) { cota = estPes; }
+
         			}
         			hijo.getAsignados()[i] = false;        			
         		}
         	}
         }
+     
         
         resultado += Arrays.toString(pasteleros) + "\n" + coste;
-        
-
-        
+        traza += "\nTermina el algoritmo";
+        traza += "\n\n----------------- RESULTADO -----------------\n\n";       
+        traza += "Pasteleros asignados: " + Arrays.toString(pasteleros) + "\nCoste: " + coste;
         // Si la traza esta activa, la muestra. En otro caso solo muestra el resultado
         if(trazaOn){return traza;}
         return resultado;        
     }
     
     
-    
-    
     @Override
     public String toString() {
     	String c = "";
-    	for(int i = 0; i<this.costes.length; i++) {
-    		for(int j = 0; j< this.costes[0].length; j++) {
-    			c += this.costes[i][j];
-    		}
-    		c+="\n";
-    	}
-        return "n: " + this.n + ", m: " + this.m + "\npasteleros: " + Arrays.toString(pasteleros) + "\npedidos: " + Arrays.toString(pedidos) + "\ncostes: \n"+c;
+    	for(int[] arr : costes) {
+        	c += Arrays.toString(arr) + "\n";
+        }    	
+        return "Numero pasteleros: " + this.n + "\nTipos de pasteles: " + this.m +  "\nPedidos: " + Arrays.toString(pedidos) + "\ncostes asociados: \n"+c;
     }
 
 }
+
+//0-2-1-3-4
+
+
+//1-3-2-4-5
+//20
