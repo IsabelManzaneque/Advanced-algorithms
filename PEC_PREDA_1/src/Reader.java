@@ -3,27 +3,19 @@ import java.io.*;
 
 public class Reader{
     
-    private int n;
-    private int M;
-    private ArrayList<Integer> valores;
-    private ArrayList<Integer> pesos;
-
-    public Reader(){	    	
-    	n = 0;
-    	M = 0;
-    	valores = new ArrayList<>();
-        pesos = new ArrayList<>();    
-                      
-    }
     
     /* Dado un archivo de entrada. comprueba si es valido y extrae la informacion */
-    public void parseFile(String str) {   	
+    public Greedy parseFile(String str) {   	
     	
     	File myFile = new File(str);  	    
-        
+    	Greedy greedy = null;
+    	
         try{
             Scanner scanner = new Scanner(myFile);  
-            this.n = Integer.parseInt(scanner.nextLine());    
+            int n = Integer.parseInt(scanner.nextLine());  
+            int M = 0;
+            ArrayList<Integer> valores = new ArrayList<>();
+            ArrayList<Integer> pesos = new ArrayList<>();
 
             while (scanner.hasNextLine()) {
                 String data[] = scanner.nextLine().split("\\s+");
@@ -31,56 +23,60 @@ public class Reader{
                     int peso = Integer.parseInt(data[0]);
                     int valor = Integer.parseInt(data[1]);
 
-                    this.pesos.add(peso);
-                    this.valores.add(valor);                  
+                    pesos.add(peso);
+                    valores.add(valor);                  
                 }else{
-                    this.M = Integer.parseInt(data[0]);
+                    M = Integer.parseInt(data[0]);
                 }                              
             }
-           scanner.close();            
+           scanner.close();   
+           if(inputValidator(n,M,pesos,valores)){
+        	   greedy = new Greedy(n,M,pesos,valores);
+           }
+        }catch (Exception e){
+            return null;
         }
-        catch (Exception e){
-            System.out.println("Error en el fichero de entrada");
-        }
+        return greedy;
     }
     
     /* Dado una String de entrada. comprueba si es valida y extrae la informacion */
-    public boolean parseStdin(String str) {
+    public Greedy parseStdin(String str) {
     	
     	String[] splited = str.split("\\s+");
+    	Greedy greedy = null;
     	
-    	// Si no hay al menos n, m y un par valor-peso, la entrada no es correcta
-    	if(splited.length < 4) {return false;}
     	
     	try{
-	    	this.n = Integer.parseInt(splited[0]);
-	    	this.M = Integer.parseInt(splited[splited.length -1]);    
-    	}catch (NumberFormatException ff){
-	        return false;
-	    }
+	    	int n = Integer.parseInt(splited[0]);
+	    	int M = Integer.parseInt(splited[splited.length -1]);  
+	    	ArrayList<Integer> valores = new ArrayList<>();
+            ArrayList<Integer> pesos = new ArrayList<>();
+        	if(n != (splited.length-2)/2) {return null;}
+            
+	    	for(int i = 1; i < splited.length-1; i+=2) {
+	    		 pesos.add(Integer.parseInt(splited[i]));
+	             valores.add(Integer.parseInt(splited[i+1]));    
+	    	}
+	    	
+	    	if(inputValidator(n,M,pesos,valores)) {
+	    		greedy = new Greedy(n,M,pesos,valores);
+	    	}
+	        
+    	}catch (Exception e){
+	        return null;
+	    }      
+    	return greedy;    
+    }
+    
+    public boolean inputValidator(int n, int m, ArrayList<Integer> p, ArrayList<Integer> v) {
     	
-    	// Si el numero de pares no es igual a n, la entrada no es correcta
-    	if(n != (splited.length-2)/2) {return false;}
-    	    	
-    	for(int i = 1; i < splited.length-1; i+=2) {
-    		 this.pesos.add(Integer.parseInt(splited[i]));
-             this.valores.add(Integer.parseInt(splited[i+1]));    
-    	}
-    	return true;    
+    	// Si no hay al menos n, m y un par valor-peso, la entrada no es correcta    
+    	if(n<1 || m < 1 || p.size() <1 || v.size()<1) {return false;}
+    	
+    	// Si el numero de pares no es igual a n, la entrada no es correctay    	    	
+    	if(p.size() != n || v.size() != n) {return false;}
+       
+    	return true;
     }
-
-    /* Getters de los atributos de la clase */    
-    public int getN(){
-        return this.n;
-    }
-    public int getM(){
-        return this.M;
-    }
-    public ArrayList<Integer> getValores(){
-        return this.valores;
-    }
-    public ArrayList<Integer> getPesos(){
-        return this.pesos;
-    }	
        
 }

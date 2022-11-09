@@ -89,8 +89,9 @@ public class Greedy{
             x.add(0.0);
         }
         
-        // Itera mientras no se alcance el peso limite de la mochila
-        while(peso < M){
+        // Itera mientras no se alcance el peso limite de la mochila 
+        // o hasta que no queden mas objetos por meter         
+        while(peso < M && i < pesos.size()){
             if(peso + pesos.get(i) <= M){
                 x.set(i,1.0);
                 peso += pesos.get(i);

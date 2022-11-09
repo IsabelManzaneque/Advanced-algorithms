@@ -24,17 +24,13 @@ public class mochila_voraz{
     	// fichero, solo puede ser el de salida    	
     	if(stdin != "") {
     		input = stdin;
-    		if(!myFiles.isEmpty()) {
-    			output = myFiles.get(0);
-    		}
+    		if(!myFiles.isEmpty()) {output = myFiles.get(0);}
     	// Si stdin esta vacio, myFiles puede contener ficheros 
     	// de entrada y salida, solo fichero de entrada o nada  	
     	}else{
     		if(!myFiles.isEmpty()){
     			input = myFiles.get(0);
-    			if(myFiles.size() == 2){
-    				output = myFiles.get(1);
-    			}
+    			if(myFiles.size() == 2){output = myFiles.get(1);}
     		}
     	}
     	
@@ -42,19 +38,24 @@ public class mochila_voraz{
     		
     		// el input puede ser un archivo o entrada estandar
     		if (new File(input).exists()) {
-    			reader.parseFile(input);    			
+    			if(reader.parseFile(input) == null) {
+    				System.out.println("Error en el fichero de entrada");
+    				return;
+    			}else{
+    				greedy = reader.parseFile(input);  
+    			}
     		}else {
     			if(input.endsWith(".txt")) {
     				System.out.println("No existe el fichero de entrada");  
     				return;
-    			}else if(!reader.parseStdin(input)) {
-    				System.out.println("Entrada estandar incorrecta");    	
+    			}else if(reader.parseStdin(input) == null) {
+    				System.out.println("Error en la entrada estandar");    	
     				return;
-    			}     			
-    		}  
-    		
-    		greedy = new Greedy(reader.getN(), reader.getM(), reader.getPesos(), reader.getValores());
-    		Writer writer = new Writer(output, greedy.mochilaFraccionable(showTraza));
+    			}else {
+    				greedy = reader.parseStdin(input);
+    			}
+    		}   		
+    		Writer writer = new Writer(output, greedy.mochilaFraccionable(showTraza));  //
     	    writer.printSalida();    		
     	}
     	
