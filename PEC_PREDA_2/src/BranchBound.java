@@ -1,16 +1,15 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 
 public class BranchBound {
 	
 		
-	private int n; // numero de pasteleros
-	private int m; // tipos de pasteles
-	private int pasteleros[]; // [0,0,0,0,0]  almacena en la posic i el pastelero asignado al pedido i.
-	private int pedidos[];    // [1,1,3,2,1]  n pedidos, tantos pedidos como pasteleros
-	private int costes[][];   //  el valor cij corresponde al coste de que el pastelero i realice el pastel j
-	private double coste;       //  tiene tantas filas como pasteleros (n rows) y tantas columnas como pasteles (m cols)
+	private int n;           // numero de pasteleros
+	private int m;           // tipos de pasteles
+	private int pasteleros[];// almacena en la posicion i el pastelero asignado al pedido i.
+	private int pedidos[];   // n pedidos, tantos pedidos como pasteleros
+	private int costes[][];  // el valor cij corresponde al coste de que el pastelero i realice el pastel j
+	private double coste;       
 	
 
     public BranchBound(int n, int m, int pedidos[], int costes[][]){
@@ -23,7 +22,7 @@ public class BranchBound {
     	this.coste = 0.0;
 	}       
     
-    /* Clase privada que implementa la estructura de nodos*/     // Tiene acceso a los atributos de la clase padre, pero al reves no
+    /* Clase privada que implementa la estructura de nodos*/ 
     private class Nodo implements Comparable<Nodo>{
     	
     	private int pasteleros[];    // almacena en la posicion i el pastelero asignado al pedido i
@@ -37,7 +36,7 @@ public class BranchBound {
 			
 			this.pasteleros = new int[n];
 			this.asignados = new boolean[n];
-			this.k = -1;  // al cambiar la k a -1 el coste sale bien, al cambiarla a 0 el vector sale bien
+			this.k = -1;  
 			this.coste = 0.0;
 			this.estOpt = 0.0;
 		}
@@ -103,6 +102,8 @@ public class BranchBound {
     }
     
 
+    /* Crea una matriz de dimensiones n x n con los costes de que el pastelero de la fila i
+     * realice el pastel de la columna j*/
     
     public int[][] getCostesTabla(int c[][], int p[]) {
     	
@@ -271,8 +272,3 @@ public class BranchBound {
 
 }
 
-//0-2-1-3-4
-
-
-//1-3-2-4-5
-//20

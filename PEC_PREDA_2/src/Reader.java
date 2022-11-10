@@ -15,7 +15,6 @@ public class Reader {
             int n = Integer.parseInt(scanner.nextLine());    
             int m = Integer.parseInt(scanner.nextLine()); 
             int costes[][] = new int[n][m];
-            //int pasteleros[] = IntStream.range(0, n).toArray();
             int pedidos[] = Arrays.stream(scanner.nextLine().split("-")).mapToInt(Integer::parseInt).toArray();           
             
             int i = 0;
@@ -47,7 +46,6 @@ public class Reader {
 	    	int n = Integer.parseInt(splited[0]);
 	    	int m = Integer.parseInt(splited[1]); 
 	        int costes[][] = new int[n][m];
-	    	//int pasteleros[] = IntStream.range(0, n).toArray();
 	    	int pedidos[] = Arrays.stream(splited[2].split("-")).mapToInt(Integer::parseInt).toArray();  
 	    		
 		    int aux = 3;
@@ -70,7 +68,7 @@ public class Reader {
     /* Comprueba que los parametros de la entrada sean consistentes con el enunciado */
     public boolean inputValidator(int n, int m, int pe[], int c[][]) {
     	
-    	if( n != pe.length || /*n != pa.length ||*/ n != c.length) {return false;}
+    	if( n != pe.length || n != c.length) {return false;}
         
     	for(int num : pe) 
     		if(num<1 || num>m) {return false;}   		
