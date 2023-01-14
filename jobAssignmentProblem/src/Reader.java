@@ -1,10 +1,18 @@
 import java.util.*;
 import java.io.*; 
 
-// Cambiar para que en lugar de guardar los atributos, los parser devuelvan un objeto pasteleria?
+/**
+ * Clase encargada de analizar los parametros de entrada, separarlos
+ * en sus distintas componentes y comprobar que son correctos. Si
+ * el input es correcto, se lo pasa a la clase que ejecuta el algoritmo.
+ * 
+ * @author Isabel Manzaneque, imanzaneq3@alumno.uned.es
+ */
 public class Reader {
     
-    /* Dado un archivo de entrada, extrae y devuelve la informacion */
+	/**
+     * Dado un archivo de entrada, comprueba si es valido y extrae la informacion
+     */
     public BranchBound parseFile(String str) {   	
     	
     	File myFile = new File(str);  	
@@ -12,9 +20,9 @@ public class Reader {
         
         try{        	
             Scanner scanner = new Scanner(myFile);  
-            int n = Integer.parseInt(scanner.nextLine());    
-            int m = Integer.parseInt(scanner.nextLine()); 
-            int costes[][] = new int[n][m];
+            int numeroPasteleros = Integer.parseInt(scanner.nextLine());    
+            int tiposPastel = Integer.parseInt(scanner.nextLine()); 
+            int costes[][] = new int[numeroPasteleros][tiposPastel];
             int pedidos[] = Arrays.stream(scanner.nextLine().split("-")).mapToInt(Integer::parseInt).toArray();           
             
             int i = 0;
@@ -26,9 +34,9 @@ public class Reader {
             }
             scanner.close(); 
             
-            // Si los datos son validos, se construye y devuelve un objeto BranchBound
-            if(!inputValidator(n,m,pedidos,costes)) {return null;}
-            bb = new BranchBound(n,m,pedidos,costes);            
+            // si input es correcto, se lo pasa a clase BranchBound
+            if(!inputValidator(numeroPasteleros,tiposPastel,pedidos,costes)) {return null;}
+            bb = new BranchBound(numeroPasteleros,tiposPastel,pedidos,costes);            
            
         }catch (Exception e){
             return null;
@@ -36,28 +44,31 @@ public class Reader {
         return bb;    
     }
     
-    /* Dado una String de entrada, extrae y devuelve la informacion */
+    
+    /**
+     * Dado un String de entrada, comprueba si es valido y extrae la informacion
+     */
     public BranchBound parseStdin(String str) {
     	
     	BranchBound bb = null;
     	String[] splited = str.split("\\s+");   	
     	    	
     	try{
-	    	int n = Integer.parseInt(splited[0]);
-	    	int m = Integer.parseInt(splited[1]); 
-	        int costes[][] = new int[n][m];
+	    	int numeroPasteleros = Integer.parseInt(splited[0]);
+	    	int tiposPastel = Integer.parseInt(splited[1]); 
+	        int costes[][] = new int[numeroPasteleros][tiposPastel];
 	    	int pedidos[] = Arrays.stream(splited[2].split("-")).mapToInt(Integer::parseInt).toArray();  
 	    		
 		    int aux = 3;
-		    for(int i = 0; i < n; i++) {
-		    	for(int j = 0; j < m; j++) {
+		    for(int i = 0; i < numeroPasteleros; i++) {
+		    	for(int j = 0; j < tiposPastel; j++) {
 		    		costes[i][j] = Integer.parseInt(splited[aux]);
 		    		aux ++;
 		    	}
 		    }
-		    // Si los datos son validos, se construye y devuelve un objeto BranchBound
-		    if(!inputValidator(n,m,pedidos,costes)) {return null;}
-	    	bb = new BranchBound(n,m,pedidos,costes);   
+	        // si input es correcto, se lo pasa a clase BranchBound
+		    if(!inputValidator(numeroPasteleros,tiposPastel,pedidos,costes)) {return null;}
+	    	bb = new BranchBound(numeroPasteleros,tiposPastel,pedidos,costes);   
 	    	
 		}catch (Exception e){
 	        return null;
@@ -65,16 +76,18 @@ public class Reader {
     	return bb;    
     }  
     
-    /* Comprueba que los parametros de la entrada sean consistentes con el enunciado */
-    public boolean inputValidator(int n, int m, int pe[], int c[][]) {
+    /**
+     * Comprueba que los parametros de la entrada sean consistentes con el enunciado
+     */
+    public boolean inputValidator(int numeroPasteleros, int tiposPastel, int pedidos[], int costes[][]) {
     	
-    	if( n != pe.length || n != c.length) {return false;}
+    	if( numeroPasteleros != pedidos.length || numeroPasteleros != costes.length) {return false;}
         
-    	for(int num : pe) 
-    		if(num<1 || num>m) {return false;}   		
+    	for(int pedido : pedidos) 
+    		if(pedido<1 || pedido>tiposPastel) {return false;}   		
     	   	
-    	for(int i = 0; i < c.length; i++) 
-    		if(c[i].length != m) {return false;}    	
+    	for(int i = 0; i < costes.length; i++) 
+    		if(costes[i].length != tiposPastel) {return false;}    	
     	   	
     	return true;
     }

@@ -1,5 +1,11 @@
 import java.io.*;
 
+/**
+ * Clase que recibe los datos de salida y el tipo de salida
+ * y escribe los datos en la salida correspondiente
+ * 
+ * @author Isabel Manzaneque, imanzaneq3@alumno.uned.es
+ */
 public class Writer {
 	
 	private String ficheroSalida;
@@ -10,10 +16,13 @@ public class Writer {
         this.infoSalida = infoSalida;       
     }
     
-    /* Dada una String de datos, la muestra por pantalla o la guarda en un fichero*/
+    /**
+     * Dado un String, lo muestra por pantalla o lo guarda en un fichero
+     */
     public void printSalida() {        
         
-    	// Si se especifica un fichero de salida se escribe la informacion en el
+    	// Si se especifica un fichero de salida 
+    	// se escriben los datos en fichero
         if (ficheroSalida!="") {
             File file = new File(ficheroSalida);
             BufferedWriter bw = null; 
@@ -40,7 +49,8 @@ public class Writer {
                     e2.printStackTrace();
                 }
             }
-        // Si no se especifica fichero de salida, escribe el resultado por salida estandar
+         // Si no se especifica fichero de salida, 
+         // escribe el resultado por salida estandar
         }else{
             System.out.println(infoSalida);
         }

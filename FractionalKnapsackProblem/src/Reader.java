@@ -1,10 +1,19 @@
 import java.util.*;
 import java.io.*; 
 
+/**
+ * Clase encargada de analizar los parametros de entrada, separarlos
+ * en sus distintas componentes y comprobar que son correctos. Si
+ * el input es correcto, se lo pasa a la clase que ejecuta el algoritmo.
+ * 
+ * @author Isabel Manzaneque, imanzaneq3@alumno.uned.es
+ */
 public class Reader{
     
     
-    /* Dado un archivo de entrada. comprueba si es valido y extrae la informacion */
+	/**
+     * Dado un archivo de entrada, comprueba si es valido y extrae la informacion
+     */
     public Greedy parseFile(String str) {   	
     	
     	File myFile = new File(str);  	    
@@ -12,8 +21,8 @@ public class Reader{
     	
         try{
             Scanner scanner = new Scanner(myFile);  
-            int n = Integer.parseInt(scanner.nextLine());  
-            int M = 0;
+            int numeroObjetos = Integer.parseInt(scanner.nextLine());  
+            int capacidad = 0;
             ArrayList<Integer> valores = new ArrayList<>();
             ArrayList<Integer> pesos = new ArrayList<>();
 
@@ -26,12 +35,13 @@ public class Reader{
                     pesos.add(peso);
                     valores.add(valor);                  
                 }else{
-                    M = Integer.parseInt(data[0]);
+                	capacidad = Integer.parseInt(data[0]);
                 }                              
             }
-           scanner.close();   
-           if(inputValidator(n,M,pesos,valores)){
-        	   greedy = new Greedy(n,M,pesos,valores);
+           scanner.close();  
+           // si input es correcto, se lo pasa a clase Greedy
+           if(inputValidator(numeroObjetos,capacidad,pesos,valores)){
+        	   greedy = new Greedy(numeroObjetos,capacidad,pesos,valores);
            }
         }catch (Exception e){
             return null;
@@ -39,7 +49,9 @@ public class Reader{
         return greedy;
     }
     
-    /* Dado una String de entrada. comprueba si es valida y extrae la informacion */
+    /**
+     * Dado un String de entrada, comprueba si es valido y extrae la informacion
+     */
     public Greedy parseStdin(String str) {
     	
     	String[] splited = str.split("\\s+");
@@ -47,19 +59,19 @@ public class Reader{
     	
     	
     	try{
-	    	int n = Integer.parseInt(splited[0]);
-	    	int M = Integer.parseInt(splited[splited.length -1]);  
+	    	int numeroObjetos = Integer.parseInt(splited[0]);
+	    	int capacidad = Integer.parseInt(splited[splited.length -1]);  
 	    	ArrayList<Integer> valores = new ArrayList<>();
             ArrayList<Integer> pesos = new ArrayList<>();
-        	if(n != (splited.length-2)/2) {return null;}
+        	if(numeroObjetos != (splited.length-2)/2) {return null;}
             
 	    	for(int i = 1; i < splited.length-1; i+=2) {
 	    		 pesos.add(Integer.parseInt(splited[i]));
 	             valores.add(Integer.parseInt(splited[i+1]));    
 	    	}
-	    	
-	    	if(inputValidator(n,M,pesos,valores)) {
-	    		greedy = new Greedy(n,M,pesos,valores);
+	    	// si input es correcto, se lo pasa a clase Greedy
+	    	if(inputValidator(numeroObjetos,capacidad,pesos,valores)) {
+	    		greedy = new Greedy(numeroObjetos,capacidad,pesos,valores);
 	    	}
 	        
     	}catch (Exception e){
@@ -68,13 +80,14 @@ public class Reader{
     	return greedy;    
     }
     
-    public boolean inputValidator(int n, int m, ArrayList<Integer> p, ArrayList<Integer> v) {
+    /**
+     * Comprueba que los parametros de la entrada sean consistentes con el enunciado
+     */
+    public boolean inputValidator(int numeroObjetos, int capacidad, ArrayList<Integer> pesos, ArrayList<Integer> valores) {    	
     	
-    	// Si no hay al menos n, m y un par valor-peso, la entrada no es correcta    
-    	if(n<1 || m < 1 || p.size() <1 || v.size()<1) {return false;}
-    	
-    	// Si el numero de pares no es igual a n, la entrada no es correctay    	    	
-    	if(p.size() != n || v.size() != n) {return false;}
+    	if(numeroObjetos<1 || capacidad < 1 || pesos.size() <1 || valores.size()<1) {return false;}
+    	 	    	
+    	if(pesos.size() != numeroObjetos || valores.size() != numeroObjetos) {return false;}
        
     	return true;
     }
