@@ -1,5 +1,7 @@
 # Algorithms
 
+Resolución de problemas utilizando algoritmos y estructuras de datos avanzadas
+
 ## Table of contents
 
 * [Fractional Knapsack Problem](#fractional-knapsack-problem)
