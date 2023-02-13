@@ -2,7 +2,7 @@
 
 Resolución de problemas utilizando algoritmos y estructuras de datos avanzadas
 
-## Table of contents
+## Problemas
 
 * [Fractional Knapsack Problem](#fractional-knapsack-problem)
 * [Job Assignment Problem](#job-assignment-problem)
