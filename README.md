@@ -1,4 +1,4 @@
-# Algorithms
+# Advanced algorithms
 
 Resolución de problemas utilizando algoritmos y estructuras de datos avanzadas
 
